@@ -3,9 +3,11 @@
 from pathlib import Path
 import xml.etree.ElementTree as ET
 import zipfile
+import sys
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")
     root = Path(__file__).resolve().parents[1]
     output = root / "src/.artifacts/Debug"
     solution = ET.parse(root / "src/STranslate.slnx").getroot()

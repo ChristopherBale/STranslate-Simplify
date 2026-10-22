@@ -8,12 +8,12 @@ namespace STranslate.Tests;
 public class MouseSelectionServiceTests
 {
     [Fact]
-    public void MouseSelectionSettingsDefaultToDisabled()
+    public void MouseSelectionSettingsDefaultToClickToTranslate()
     {
         var settings = new Settings();
 
         Assert.False(settings.IsMouseSelectionTranslationEnabled);
-        Assert.False(settings.IsMouseSelectionIconEnabled);
+        Assert.True(settings.IsMouseSelectionIconEnabled);
         Assert.Null(typeof(Settings).GetProperty("IsMouseHook"));
         Assert.Null(typeof(Settings).GetProperty("ShowIconAfterMouseSelection"));
     }

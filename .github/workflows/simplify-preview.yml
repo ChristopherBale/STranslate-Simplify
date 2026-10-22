@@ -29,15 +29,46 @@ jobs:
         id: build
         run: dotnet build src/STranslate.slnx --configuration Debug --nologo
 
+      - name: Enable window animations for UI tests
+        shell: pwsh
+        run: |
+          Add-Type @'
+          using System;
+          using System.Runtime.InteropServices;
+          public static class PreviewTestDesktop
+          {
+              [DllImport("user32.dll", EntryPoint = "SystemParametersInfoW", SetLastError = true)]
+              [return: MarshalAs(UnmanagedType.Bool)]
+              public static extern bool SetParameter(uint action, uint parameter, IntPtr value, uint flags);
+
+              [DllImport("user32.dll", EntryPoint = "SystemParametersInfoW", SetLastError = true)]
+              [return: MarshalAs(UnmanagedType.Bool)]
+              public static extern bool GetParameter(uint action, uint parameter, out int value, uint flags);
+          }
+          '@
+          # 托管 runner 默认可能关闭动画；窗口动画测试需要此系统选项。
+          $animationEnabled = 0
+          if (-not [PreviewTestDesktop]::GetParameter(0x1042, 0, [ref]$animationEnabled, 0)) {
+            throw "无法读取测试环境的窗口动画设置"
+          }
+          Write-Output "Client area animation before tests: $animationEnabled"
+          if (-not [PreviewTestDesktop]::SetParameter(0x1043, 0, [IntPtr]1, 2)) {
+            throw "无法启用测试环境的窗口动画"
+          }
+          if (-not [PreviewTestDesktop]::GetParameter(0x1042, 0, [ref]$animationEnabled, 0) -or $animationEnabled -ne 1) {
+            throw "测试环境的窗口动画未启用"
+          }
+
       - name: Run Windows tests
         run: dotnet test src/Tests/STranslate.Tests/STranslate.Tests.csproj --configuration Debug --no-build --no-restore --logger trx --results-directory TestResults
 
       - name: Package portable preview
+        id: package
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: python scripts/package_preview.py
 
       - name: Upload portable preview
-        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        if: ${{ !cancelled() && steps.package.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: STranslate-Simplify-win-x64-preview
