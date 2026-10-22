@@ -1,0 +1,55 @@
+name: Simplified Windows preview
+
+on:
+  push:
+    branches: [simplify]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simplify-preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-preview:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build solution
+        id: build
+        run: dotnet build src/STranslate.slnx --configuration Debug --nologo
+
+      - name: Run Windows tests
+        run: dotnet test src/Tests/STranslate.Tests/STranslate.Tests.csproj --configuration Debug --no-build --no-restore --logger trx --results-directory TestResults
+
+      - name: Package portable preview
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: python scripts/package_preview.py
+
+      - name: Upload portable preview
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: STranslate-Simplify-win-x64-preview
+          path: publish/STranslate-Simplify-win-x64-preview.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-test-results
+          path: TestResults/*.trx
+          if-no-files-found: ignore
+          retention-days: 14

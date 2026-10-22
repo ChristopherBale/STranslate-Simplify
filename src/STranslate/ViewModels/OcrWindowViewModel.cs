@@ -34,7 +34,6 @@ public partial class OcrWindowViewModel : ObservableObject, IDisposable
         ILogger<OcrWindowViewModel> logger,
         MainWindowViewModel mainWindowViewModel,
         OcrService ocrService,
-        TtsService ttsService,
         Internationalization i18n,
         ISnackbar snackbar,
         INotification notification,
@@ -45,7 +44,6 @@ public partial class OcrWindowViewModel : ObservableObject, IDisposable
         DataProvider = dataProvider;
         _mainWindowViewModel = mainWindowViewModel;
         _ocrService = ocrService;
-        _ttsService = ttsService;
         _i18n = i18n;
         _snackbar = snackbar;
         _notification = notification;
@@ -77,7 +75,6 @@ public partial class OcrWindowViewModel : ObservableObject, IDisposable
     private readonly ILogger<OcrWindowViewModel> _logger;
     private readonly MainWindowViewModel _mainWindowViewModel;
     private readonly OcrService _ocrService;
-    private readonly TtsService _ttsService;
     private readonly Internationalization _i18n;
     private readonly ISnackbar _snackbar;
     private readonly INotification _notification;
@@ -301,22 +298,6 @@ public partial class OcrWindowViewModel : ObservableObject, IDisposable
     private void Translate()
     {
         _mainWindowViewModel.ExecuteTranslate(Result);
-    }
-
-    [RelayCommand(IncludeCancelCommand = true)]
-    private async Task PlayAudioAsync(string text, CancellationToken cancellationToken)
-    {
-        var ttsSvc = _ttsService.GetActiveSvc<ITtsPlugin>();
-        if (ttsSvc == null)
-        {
-            Helper.PromptConfigureService(
-                _i18n.GetTranslation("Prompt"),
-                _i18n.GetTranslation("TtsServiceNotFound"),
-                nameof(TtsPage));
-            return;
-        }
-
-        await ttsSvc.PlayAudioAsync(text, cancellationToken);
     }
 
     [RelayCommand]
@@ -943,7 +924,6 @@ public partial class OcrWindowViewModel : ObservableObject, IDisposable
     public void CancelOperations()
     {
         ExecuteCancelCommand.Execute(null);
-        PlayAudioCancelCommand.Execute(null);
         Clear();
     }
 

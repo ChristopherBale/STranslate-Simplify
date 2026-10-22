@@ -433,22 +433,6 @@
                                     VerticalAlignment="Bottom"
                                     Orientation="Horizontal"
                                     Spacing="5">
-                                    <Grid>
-                                        <control:IconButton
-                                            Padding="5,3"
-                                            Command="{Binding PlayAudioCommand}"
-                                            CommandParameter="{Binding Result}"
-                                            Icon="{x:Static ui:FluentSystemIcons.Speaker2_24_Regular}"
-                                            IconSize="14"
-                                            Visibility="{Binding PlayAudioCommand.IsRunning, Converter={cnvt:BoolToVisibilityInverseConverter}}" />
-                                        <control:IconButton
-                                            Padding="5,3"
-                                            Command="{Binding PlayAudioCancelCommand}"
-                                            Icon="{x:Static ui:FluentSystemIcons.Stop_24_Regular}"
-                                            IconSize="14"
-                                            ToolTip="{DynamicResource Cancel}"
-                                            Visibility="{Binding PlayAudioCommand.IsRunning, Converter={cnvt:BoolToVisibilityConverter}}" />
-                                    </Grid>
                                     <control:IconButton
                                         Padding="5,3"
                                         Command="{Binding CopyCommand}"

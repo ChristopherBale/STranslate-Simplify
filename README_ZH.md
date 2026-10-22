@@ -1,3 +1,5 @@
+> 本分支为个人精简版，以划词悬浮图标翻译和截图翻译为主，已移除生词本、语音合成相关功能。构建与使用说明见[精简版说明](src/docs/simplified-edition.md)。
+
 <div align="center">
 
 <p>

@@ -10,6 +10,7 @@ public class ServiceSettings
     public string ImageTranslateSvcID { get; set; } = string.Empty;
     public string ImageTranslateOcrSvcID { get; set; } = string.Empty;
     public List<ServiceData> TranSvcDatas { get; set; } = [];
+    // 保留旧版字段以便配置往返兼容；精简版不加载这些服务。
     public List<ServiceData> TtsSvcDatas { get; set; } = [];
     public List<ServiceData> OcrSvcDatas { get; set; } = [];
     public List<ServiceData> VocabularySvcDatas { get; set; } = [];

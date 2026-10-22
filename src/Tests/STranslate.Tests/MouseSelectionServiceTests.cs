@@ -149,11 +149,12 @@ public class MouseSelectionServiceTests
     }
 
     [Fact]
-    public async Task IconModeDefersTextCaptureUntilRequested()
+    public async Task DefaultSettingsDeferTextCaptureUntilIconIsClicked()
     {
         var hook = new FakeMouseHookService();
+        var settings = new Settings();
         var captureCount = 0;
-        using var service = CreateService(hook, new Settings(), _ =>
+        using var service = CreateService(hook, settings, _ =>
         {
             captureCount++;
             return Task.FromResult<string?>("selected");
@@ -161,7 +162,8 @@ public class MouseSelectionServiceTests
         Point? iconPoint = null;
         service.IconRequested += (_, point) => iconPoint = point;
 
-        Assert.True(service.ApplyPersistentFeatures(directTranslationEnabled: false, iconEnabled: true));
+        Assert.True(service.ApplyPersistentFeatures(
+            settings.IsMouseSelectionTranslationEnabled, settings.IsMouseSelectionIconEnabled));
         hook.RaiseSelectionCompleted(new Point(20, 30));
 
         Assert.Equal(new Point(20, 30), iconPoint);

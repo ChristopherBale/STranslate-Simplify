@@ -36,7 +36,7 @@
 
 ### 从入口到结果：服务实例化与持久化恢复
 1. `ServiceManager.LoadServices()` 先清理被标记删除的插件配置/缓存目录。
-2. 对每个插件目录读取 `*.json`（文件名即 `SvcID`），与 `ServiceSettings` 的四类 `ServiceData` 做 join。
+2. 对每个已加载插件目录读取 `*.json`（文件名即 `SvcID`），与 `ServiceSettings` 的翻译、OCR 两类 `ServiceData` 做 join。旧 TTS、生词本配置字段保留，但不参与服务加载及丢失配置清理。
 3. 对 join 命中的记录创建 `Service`：
    - 克隆 `PluginMetaData`
    - 绑定 `ServiceID`、`DisplayName`、`IsEnabled`
@@ -60,10 +60,10 @@
    - 启用组和未启用组内部相对顺序保持不变。
 
 ### 服务重复策略
-- 翻译、OCR、TTS 和生词本服务执行“重复”时都会生成独立的 `ServiceID`，名称为原名称加 `_New`，并插入原服务后一位。
+- 翻译、OCR 服务执行“重复”时都会生成独立的 `ServiceID`，名称为原名称加 `_New`，并插入原服务后一位。
 - 重复操作会复制插件配置 JSON、执行模式、自动回译和自定义图标；插件初始化必须在配置复制后执行。
 - 新旧服务使用各自的配置文件和图标文件，完成重复后可以独立修改。替换翻译、图片翻译、图片翻译 OCR 等全局角色仍保持指向原服务。
-- OCR、TTS 和生词本只允许启用一个服务，因此其副本默认禁用；文本翻译副本保持原服务的启用状态。
+- OCR 只允许启用一个服务，因此其副本默认禁用；文本翻译副本保持原服务的启用状态。
 
 ### 安装、升级、卸载策略
 - 安装：`.spkg` 解压到临时目录，校验 `plugin.json`，按插件 ID 决定目标目录（预装目录或用户目录），加载成功后加入运行集合。
@@ -90,6 +90,6 @@
 ## 常见改动任务
 - 新增插件类型（例如新能力接口）：同步修改 `BaseService.OnPluginMetaDatasCollectionChanged` 与对应服务模块加载逻辑。
 - 调整安装策略：优先改 `PluginManager.InstallPlugin` 与 `MoveToPluginPath`，不要破坏 `NeedUpgrade` / `NeedDelete` 标记语义。
-- 服务配置丢失排查：先检查 `DataLocation.PluginSettingsDirectory` 的 `SvcID.json` 与 `ServiceSettings` 四类列表是否一致。
+- 服务配置丢失排查：先检查 `DataLocation.PluginSettingsDirectory` 的 `SvcID.json` 与 `ServiceSettings` 的翻译、OCR 列表是否一致。
 - 插件配置迁移：优先在插件 `Init` 中做版本迁移，再 `SaveSettingStorage`，避免在主程序层硬编码插件私有结构。
 - 调整服务排序工具：优先复用 `ObservableCollection.Move()`，让现有集合监听和持久化逻辑生效。

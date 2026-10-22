@@ -624,16 +624,6 @@
                     <Run Text=": " />
                     <Run Text="{Binding OcrPluginCount, Mode=OneWay}" />
                 </TextBlock>
-                <TextBlock>
-                    <Run Text="{DynamicResource PluginTypeTts}" />
-                    <Run Text=": " />
-                    <Run Text="{Binding TtsPluginCount, Mode=OneWay}" />
-                </TextBlock>
-                <TextBlock>
-                    <Run Text="{DynamicResource PluginTypeVocabulary}" />
-                    <Run Text=": " />
-                    <Run Text="{Binding VocabularyPluginCount, Mode=OneWay}" />
-                </TextBlock>
             </ikw:SimpleStackPanel>
             <ikw:SimpleStackPanel
                 Orientation="Horizontal"
@@ -653,16 +643,6 @@
                     <Run Text="{DynamicResource PluginTypeOcr}" />
                     <Run Text=": " />
                     <Run Text="{Binding MarketOcrPluginCount, Mode=OneWay}" />
-                </TextBlock>
-                <TextBlock>
-                    <Run Text="{DynamicResource PluginTypeTts}" />
-                    <Run Text=": " />
-                    <Run Text="{Binding MarketTtsPluginCount, Mode=OneWay}" />
-                </TextBlock>
-                <TextBlock>
-                    <Run Text="{DynamicResource PluginTypeVocabulary}" />
-                    <Run Text=": " />
-                    <Run Text="{Binding MarketVocabularyPluginCount, Mode=OneWay}" />
                 </TextBlock>
             </ikw:SimpleStackPanel>
         </Grid>

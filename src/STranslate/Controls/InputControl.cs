@@ -228,54 +228,6 @@ public class InputControl : Control
             typeof(ICommand),
             typeof(InputControl));
 
-    public ICommand? SaveToVocabularyCommand
-    {
-        get => (ICommand?)GetValue(SaveToVocabularyCommandProperty);
-        set => SetValue(SaveToVocabularyCommandProperty, value);
-    }
-
-    public static readonly DependencyProperty SaveToVocabularyCommandProperty =
-        DependencyProperty.Register(
-            nameof(SaveToVocabularyCommand),
-            typeof(ICommand),
-            typeof(InputControl));
-
-    public bool HasActivedVocabulary
-    {
-        get => (bool)GetValue(HasActivedVocabularyProperty);
-        set => SetValue(HasActivedVocabularyProperty, value);
-    }
-
-    public static readonly DependencyProperty HasActivedVocabularyProperty =
-        DependencyProperty.Register(
-            nameof(HasActivedVocabulary),
-            typeof(bool),
-            typeof(InputControl));
-
-    public ICommand? PlayAudioCommand
-    {
-        get => (ICommand?)GetValue(PlayAudioCommandProperty);
-        set => SetValue(PlayAudioCommandProperty, value);
-    }
-
-    public static readonly DependencyProperty PlayAudioCommandProperty =
-        DependencyProperty.Register(
-            nameof(PlayAudioCommand),
-            typeof(ICommand),
-            typeof(InputControl));
-
-    public ICommand? PlayAudioCancelCommand
-    {
-        get => (ICommand?)GetValue(PlayAudioCancelCommandProperty);
-        set => SetValue(PlayAudioCancelCommandProperty, value);
-    }
-
-    public static readonly DependencyProperty PlayAudioCancelCommandProperty =
-        DependencyProperty.Register(
-            nameof(PlayAudioCancelCommand),
-            typeof(ICommand),
-            typeof(InputControl));
-
     public ICommand? CopyCommand
     {
         get => (ICommand?)GetValue(CopyCommandProperty);

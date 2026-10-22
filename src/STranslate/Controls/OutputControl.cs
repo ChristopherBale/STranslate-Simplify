@@ -85,42 +85,6 @@ public class OutputControl : ItemsControl
             typeof(ICommand),
             typeof(OutputControl));
 
-    public ICommand? PlayAudioCommand
-    {
-        get => (ICommand?)GetValue(PlayAudioCommandProperty);
-        set => SetValue(PlayAudioCommandProperty, value);
-    }
-
-    public static readonly DependencyProperty PlayAudioCommandProperty =
-        DependencyProperty.Register(
-            nameof(PlayAudioCommand),
-            typeof(ICommand),
-            typeof(OutputControl));
-
-    public ICommand? PlayAudioCancelCommand
-    {
-        get => (ICommand?)GetValue(PlayAudioCancelCommandProperty);
-        set => SetValue(PlayAudioCancelCommandProperty, value);
-    }
-
-    public static readonly DependencyProperty PlayAudioCancelCommandProperty =
-        DependencyProperty.Register(
-            nameof(PlayAudioCancelCommand),
-            typeof(ICommand),
-            typeof(OutputControl));
-
-    public ICommand? PlayAudioUrlCommand
-    {
-        get => (ICommand?)GetValue(PlayAudioUrlCommandProperty);
-        set => SetValue(PlayAudioUrlCommandProperty, value);
-    }
-
-    public static readonly DependencyProperty PlayAudioUrlCommandProperty =
-        DependencyProperty.Register(
-            nameof(PlayAudioUrlCommand),
-            typeof(ICommand),
-            typeof(OutputControl));
-
     public bool ShowPrompt
     {
         get => (bool)GetValue(ShowPromptProperty);
@@ -295,21 +259,5 @@ public class OutputControl : ItemsControl
             typeof(OutputControl),
             new PropertyMetadata(true));
 
-    public ICommand? SaveToVocabularyWithNoteCommand
-    {
-        get => (ICommand?)GetValue(SaveToVocabularyWithNoteCommandProperty);
-        set => SetValue(SaveToVocabularyWithNoteCommandProperty, value);
-    }
 
-    public static readonly DependencyProperty SaveToVocabularyWithNoteCommandProperty =
-        DependencyProperty.Register(nameof(SaveToVocabularyWithNoteCommand), typeof(ICommand), typeof(OutputControl));
-
-    public bool HasActivedVocabulary
-    {
-        get => (bool)GetValue(HasActivedVocabularyProperty);
-        set => SetValue(HasActivedVocabularyProperty, value);
-    }
-
-    public static readonly DependencyProperty HasActivedVocabularyProperty =
-        DependencyProperty.Register(nameof(HasActivedVocabulary), typeof(bool), typeof(OutputControl), new PropertyMetadata(false));
 }

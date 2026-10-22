@@ -80,20 +80,6 @@ public partial class PluginViewModel : ObservableObject
         .Where(x => typeof(IOcrPlugin).IsAssignableFrom(x.PluginType))
         .Count();
 
-    /// <summary>
-    /// TTS插件数量
-    /// </summary>
-    public int TtsPluginCount => _pluginService.PluginMetaDatas
-        .Where(x => typeof(ITtsPlugin).IsAssignableFrom(x.PluginType))
-        .Count();
-
-    /// <summary>
-    /// 词汇表插件数量
-    /// </summary>
-    public int VocabularyPluginCount => _pluginService.PluginMetaDatas
-        .Where(x => typeof(IVocabularyPlugin).IsAssignableFrom(x.PluginType))
-        .Count();
-
     #region 插件市场相关字段
 
     private readonly CollectionViewSource _pluginsCollectionView;
@@ -179,12 +165,6 @@ public partial class PluginViewModel : ObservableObject
     [ObservableProperty]
     public partial int MarketOcrPluginCount { get; set; }
 
-    [ObservableProperty]
-    public partial int MarketTtsPluginCount { get; set; }
-
-    [ObservableProperty]
-    public partial int MarketVocabularyPluginCount { get; set; }
-
     #endregion
 
     public PluginViewModel(
@@ -216,8 +196,6 @@ public partial class PluginViewModel : ObservableObject
             OnPropertyChanged(nameof(TotalPluginCount));
             OnPropertyChanged(nameof(TranslatePluginCount));
             OnPropertyChanged(nameof(OcrPluginCount));
-            OnPropertyChanged(nameof(TtsPluginCount));
-            OnPropertyChanged(nameof(VocabularyPluginCount));
 
             // 同时更新市场插件状态
             UpdatePluginStatus();
@@ -257,8 +235,6 @@ public partial class PluginViewModel : ObservableObject
         {
             PluginType.Translate => plugin.Type == "Translate",
             PluginType.Ocr => plugin.Type == "Ocr",
-            PluginType.Tts => plugin.Type == "Tts",
-            PluginType.Vocabulary => plugin.Type == "Vocabulary",
             _ => true
         };
 
@@ -271,8 +247,6 @@ public partial class PluginViewModel : ObservableObject
         {
             PluginType.Translate => typeof(ITranslatePlugin).IsAssignableFrom(pluginType) || typeof(IDictionaryPlugin).IsAssignableFrom(pluginType),
             PluginType.Ocr => typeof(IOcrPlugin).IsAssignableFrom(pluginType),
-            PluginType.Tts => typeof(ITtsPlugin).IsAssignableFrom(pluginType),
-            PluginType.Vocabulary => typeof(IVocabularyPlugin).IsAssignableFrom(pluginType),
             _ => true
         };
     }
@@ -368,7 +342,8 @@ public partial class PluginViewModel : ObservableObject
             var nameParts = packageName.Split('.');
             if (nameParts.Length < 4) return null;
 
-            var type = nameParts[2]; // Translate, Ocr, Tts, Vocabulary
+            var type = nameParts[2];
+            if (type is not ("Translate" or "Ocr")) return null;
 
             // 尝试获取 plugin.json（先 main 分支，失败则回退到 master）
             // 并在单次加载内复用分支探测结果
@@ -535,8 +510,6 @@ public partial class PluginViewModel : ObservableObject
         MarketTotalPluginCount = Plugins.Count;
         MarketTranslatePluginCount = Plugins.Count(p => p.Type == "Translate");
         MarketOcrPluginCount = Plugins.Count(p => p.Type == "Ocr");
-        MarketTtsPluginCount = Plugins.Count(p => p.Type == "Tts");
-        MarketVocabularyPluginCount = Plugins.Count(p => p.Type == "Vocabulary");
     }
 
     #endregion
@@ -954,7 +927,7 @@ public partial class PluginMarketInfo : ObservableObject
     public string Author { get; set; } = string.Empty;
 
     /// <summary>
-    /// 插件类型 (Translate/Ocr/Tts/Vocabulary)
+    /// 插件类型 (Translate/Ocr)
     /// </summary>
     public string Type { get; set; } = string.Empty;
 
@@ -1118,6 +1091,4 @@ public enum PluginType
     All,
     Translate,
     Ocr,
-    Tts,
-    Vocabulary,
 }

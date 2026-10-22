@@ -293,17 +293,6 @@
                                                 FontFamily="Consolas, 'Courier New'"
                                                 FontSize="{DynamicResource STControlFontSize12}"
                                                 Text="{Binding Phonetic, StringFormat='/\{0\}/'}" />
-                                            <!--  音频播放按钮  -->
-                                            <Button
-                                                Padding="4"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioUrlCommand}"
-                                                CommandParameter="{Binding AudioUrl}"
-                                                ToolTip="{DynamicResource PlayPronunciation}"
-                                                Visibility="{Binding AudioUrl, Converter={cnvt:EqualToVisibilityInverseConverter}}">
-                                                <ui:FontIcon FontSize="{DynamicResource STControlFontSize12}" Icon="{x:Static ui:FluentSystemIcons.Speaker1_24_Regular}" />
-                                            </Button>
                                         </ikw:SimpleStackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
@@ -701,19 +690,6 @@
                                         </Style.Triggers>
                                     </Style>
                                 </ikw:SimpleStackPanel.Style>
-                                <Grid>
-                                    <control:IconButton
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioCommand}"
-                                        CommandParameter="{Binding Plugin.TransResult.Text}"
-                                        Icon="{x:Static ui:FluentSystemIcons.Speaker2_20_Regular}"
-                                        ToolTip="{DynamicResource Tts}"
-                                        Visibility="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioCommand.IsRunning, Converter={cnvt:BoolToVisibilityInverseConverter}}" />
-                                    <control:IconButton
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioCancelCommand}"
-                                        Icon="{x:Static ui:FluentSystemIcons.Stop_20_Regular}"
-                                        ToolTip="{DynamicResource Cancel}"
-                                        Visibility="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioCommand.IsRunning, Converter={cnvt:BoolToVisibilityConverter}}" />
-                                </Grid>
                                 <control:IconButton
                                     Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=CopyCommand}"
                                     CommandParameter="{Binding Plugin.TransResult.Text}"
@@ -756,12 +732,6 @@
                                         Icon="{x:Static ui:FluentSystemIcons.FlashAuto_20_Regular}"
                                         ToolTip="{DynamicResource BackTranslation}"
                                         Visibility="{Binding Options.AutoBackTranslation, Converter={cnvt:BoolToVisibilityConverter}}" />
-                                    <control:IconButton
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=SaveToVocabularyWithNoteCommand}"
-                                        CommandParameter="{Binding}"
-                                        Icon="{x:Static ui:FluentSystemIcons.BookmarkMultiple_20_Regular}"
-                                        ToolTip="{DynamicResource SaveToVocabularyWithNote}"
-                                        Visibility="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=HasActivedVocabulary, Converter={cnvt:BoolToVisibilityConverter}}" />
                                 </StackPanel>
                             </ikw:SimpleStackPanel>
                         </Grid>
@@ -828,19 +798,6 @@
                                             </Style.Triggers>
                                         </Style>
                                     </ikw:SimpleStackPanel.Style>
-                                    <Grid>
-                                        <control:IconButton
-                                            Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioCommand}"
-                                            CommandParameter="{Binding Plugin.TransBackResult.Text}"
-                                            Icon="{x:Static ui:FluentSystemIcons.Speaker2_20_Regular}"
-                                            ToolTip="{DynamicResource Tts}"
-                                            Visibility="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioCommand.IsRunning, Converter={cnvt:BoolToVisibilityInverseConverter}}" />
-                                        <control:IconButton
-                                            Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioCancelCommand}"
-                                            Icon="{x:Static ui:FluentSystemIcons.Stop_20_Regular}"
-                                            ToolTip="{DynamicResource Cancel}"
-                                            Visibility="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioCommand.IsRunning, Converter={cnvt:BoolToVisibilityConverter}}" />
-                                    </Grid>
                                     <control:IconButton
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=CopyCommand}"
                                         CommandParameter="{Binding Plugin.TransBackResult.Text}"

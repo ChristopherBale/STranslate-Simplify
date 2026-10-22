@@ -244,19 +244,6 @@ public class ExternalCallService(
                 case ExternalCallAction.forbiddenhotkey:
                     viewModel.ToggleGlobalHotkey();
                     break;
-                case ExternalCallAction.tts_silence:
-                    if (string.IsNullOrWhiteSpace(content))
-                    {
-                        if (viewModel.SilentTtsCommand.IsRunning)
-                        {
-                            viewModel.SilentTtsCancelCommand.Execute(null);
-                            return;
-                        }
-                        await viewModel.SilentTtsCommand.ExecuteAsync(null);
-                    }
-                    else
-                        await viewModel.SilentTtsHandlerAsync(content);
-                    break;
                 default:
                     break;
             }
@@ -324,6 +311,5 @@ public enum ExternalCallAction
     open_window,
     open_preference,
     open_history,
-    forbiddenhotkey,
-    tts_silence
+    forbiddenhotkey
 }

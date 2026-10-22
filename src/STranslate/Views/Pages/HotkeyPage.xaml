@@ -199,16 +199,6 @@
                             WindowTitle="{DynamicResource Hotkey_SilentOcr}" />
                     </ui:SettingsCard>
 
-                    <ui:SettingsCard Description="{DynamicResource Hotkey_SilentTtsDescription}" Header="{DynamicResource Hotkey_SilentTts}">
-                        <ui:SettingsCard.HeaderIcon>
-                            <ui:FontIcon Icon="{x:Static ui:FluentSystemIcons.DesktopSpeaker_24_Regular}" />
-                        </ui:SettingsCard.HeaderIcon>
-                        <control:HotkeyControl
-                            DefaultHotkey="{Binding HotkeySettings.SilentTtsHotkey.Default}"
-                            Hotkey="{Binding HotkeySettings.SilentTtsHotkey.Key}"
-                            IsRegistered="{Binding HotkeySettings.SilentTtsHotkey.IsConflict}"
-                            WindowTitle="{DynamicResource Hotkey_SilentTts}" />
-                    </ui:SettingsCard>
 
                     <ui:SettingsCard Description="{DynamicResource Hotkey_OcrDescription}" Header="{DynamicResource Hotkey_Ocr}">
                         <ui:SettingsCard.HeaderIcon>
@@ -296,14 +286,6 @@
                                 WindowTitle="{DynamicResource Hotkey_ShowHideInputBox}" />
                         </ui:SettingsCard>
 
-                        <ui:SettingsCard Header="{DynamicResource Hotkey_SaveToVocabulary}">
-                            <control:HotkeyControl
-                                DefaultHotkey="{Binding HotkeySettings.SaveToVocabularyHotkey.Default}"
-                                Hotkey="{Binding HotkeySettings.SaveToVocabularyHotkey.Key}"
-                                Type="MainWindow"
-                                ValidateKeyGesture="False"
-                                WindowTitle="{DynamicResource Hotkey_SaveToVocabulary}" />
-                        </ui:SettingsCard>
 
                         <ui:SettingsCard Header="{DynamicResource Hotkey_HistoryNavigePrevious}">
                             <control:HotkeyControl

@@ -29,7 +29,6 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
     private readonly ILogger<MainWindowViewModel> _logger;
     private readonly Internationalization _i18n;
-    private readonly IAudioPlayer _audioPlayer;
     private readonly IScreenshot _screenshot;
     private readonly ISnackbar _snackbar;
     private readonly INotification _notification;
@@ -46,8 +45,6 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
     public TranslateService TranslateService { get; }
     public OcrService OcrService { get; }
-    public TtsService TtsService { get; }
-    public VocabularyService VocabularyService { get; }
     public ObservableCollection<ServiceQuickAccessItem> QuickServiceItems { get; } = [];
 
     private readonly SqlService _sqlService;
@@ -68,14 +65,11 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         DataProvider dataProvider,
         ILogger<MainWindowViewModel> logger,
         Internationalization i18n,
-        IAudioPlayer audioPlayer,
         IScreenshot screenshot,
         ISnackbar snackbar,
         INotification notification,
         TranslateService translateService,
         OcrService ocrService,
-        TtsService ttsService,
-        VocabularyService vocabularyService,
         SqlService sqlService,
         Settings settings,
         HotkeySettings hotkeySettings,
@@ -90,14 +84,11 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         _logger = logger;
         _i18n = i18n;
         _translationCoordinator = new(i18n.GetTranslation);
-        _audioPlayer = audioPlayer;
         _screenshot = screenshot;
         _snackbar = snackbar;
         _notification = notification;
         TranslateService = translateService;
         OcrService = ocrService;
-        TtsService = ttsService;
-        VocabularyService = vocabularyService;
         _sqlService = sqlService;
         Settings = settings;
         HotkeySettings = hotkeySettings;
@@ -113,8 +104,6 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
         TranslateService.Services.CollectionChanged += OnQuickServiceCollectionChanged;
         OcrService.Services.CollectionChanged += OnQuickServiceCollectionChanged;
-        TtsService.Services.CollectionChanged += OnQuickServiceCollectionChanged;
-        VocabularyService.Services.CollectionChanged += OnQuickServiceCollectionChanged;
         RebuildQuickServiceItems();
 
         _debounceExecutor = new();
@@ -146,8 +135,6 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         var hasPreviousGroup = false;
         AddQuickServiceGroup(TranslateService.Services, ref hasPreviousGroup);
         AddQuickServiceGroup(OcrService.Services, ref hasPreviousGroup);
-        AddQuickServiceGroup(TtsService.Services, ref hasPreviousGroup);
-        AddQuickServiceGroup(VocabularyService.Services, ref hasPreviousGroup);
     }
 
     private void AddQuickServiceGroup(IEnumerable<Service> services, ref bool hasPreviousGroup)
@@ -1434,151 +1421,6 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    #region TTS & Audio Commands
-
-    [RelayCommand(IncludeCancelCommand = true)]
-    private async Task PlayAudioAsync(string text, CancellationToken cancellationToken)
-    {
-        var ttsSvc = TtsService.GetActiveSvc<ITtsPlugin>();
-        if (ttsSvc == null)
-        {
-            Helper.PromptConfigureService(
-                _i18n.GetTranslation("Prompt"),
-                _i18n.GetTranslation("TtsServiceNotFound"),
-                nameof(TtsPage));
-            return;
-        }
-
-        try
-        {
-            await ttsSvc.PlayAudioAsync(text, cancellationToken);
-        }
-        catch (TaskCanceledException)
-        {
-            _snackbar.ShowInfo(_i18n.GetTranslation("TtsCancelled"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "TTS播放失败");
-            _snackbar.ShowError(_i18n.GetTranslation("TtsFailed"));
-        }
-    }
-
-    [RelayCommand(IncludeCancelCommand = true)]
-    private async Task PlayAudioUrlAsync(string url, CancellationToken cancellationToken)
-    {
-        try
-        {
-            await _audioPlayer.PlayAsync(url, cancellationToken);
-        }
-        catch (TaskCanceledException)
-        {
-            _snackbar.ShowInfo(_i18n.GetTranslation("TtsCancelled"));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "音频播放失败");
-            _snackbar.ShowError(_i18n.GetTranslation("TtsFailed"));
-        }
-    }
-
-    [RelayCommand(IncludeCancelCommand = true)]
-    private async Task SilentTtsAsync(CancellationToken cancellationToken)
-    {
-        var (success, text) = await GetTextAsync();
-        if (!success || string.IsNullOrWhiteSpace(text))
-            return;
-        await SilentTtsHandlerAsync(text, default, cancellationToken);
-    }
-
-    public async Task SilentTtsHandlerAsync(string text, ITtsPlugin? ttsSvc = default, CancellationToken cancellationToken = default)
-    {
-        ttsSvc ??= TtsService.GetActiveSvc<ITtsPlugin>();
-        if (ttsSvc == null)
-        {
-            Helper.PromptConfigureService(
-                _i18n.GetTranslation("Prompt"),
-                _i18n.GetTranslation("TtsServiceNotFound"),
-                nameof(TtsPage));
-            return;
-        }
-
-        try
-        {
-            CursorHelper.Execute();
-            await ttsSvc.PlayAudioAsync(text, cancellationToken);
-        }
-        catch (TaskCanceledException)
-        {
-            // Ignore
-        }
-        finally
-        {
-            CursorHelper.Restore();
-        }
-    }
-
-    #endregion
-
-    #region Voculary Commands
-
-    [RelayCommand(IncludeCancelCommand = true)]
-    private async Task SaveToVocabularyAsync(string text, CancellationToken cancellationToken)
-    {
-        var vocabularySvc = VocabularyService.GetActiveSvc<IVocabularyPlugin>();
-        if (vocabularySvc == null)
-        {
-            Helper.PromptConfigureService(
-                _i18n.GetTranslation("Prompt"),
-                _i18n.GetTranslation("VocabularyServiceNotFound"),
-                nameof(VocabularyPage));
-            return;
-        }
-
-        var result = await vocabularySvc.SaveAsync(text, cancellationToken);
-        if (result.IsSuccess)
-            _snackbar.ShowSuccess(_i18n.GetTranslation("OperationSuccess"));
-        else
-            _snackbar.ShowError(_i18n.GetTranslation("OperationFailed"));
-    }
-
-    [RelayCommand(IncludeCancelCommand = true)]
-    private async Task SaveToVocabularyWithNoteAsync(Service service, CancellationToken cancellationToken)
-    {
-        var vocabularySvc = VocabularyService.GetActiveSvc<IVocabularyPlugin>();
-        if (vocabularySvc == null)
-        {
-            Helper.PromptConfigureService(
-                _i18n.GetTranslation("Prompt"),
-                _i18n.GetTranslation("VocabularyServiceNotFound"),
-                nameof(VocabularyPage));
-            return;
-        }
-
-        if (service.Plugin is not ITranslatePlugin plugin || plugin.TransResult.IsProcessing)
-            return;
-
-        var word = InputText;
-        var note = plugin.TransResult.IsSuccess ? plugin.TransResult.Text : string.Empty;
-
-        if (string.IsNullOrWhiteSpace(word))
-        {
-            _snackbar.ShowWarning(_i18n.GetTranslation("InputContentIsEmpty"));
-            return;
-        }
-
-        var result = await vocabularySvc.SaveWithNoteAsync(word, note, cancellationToken);
-        if (cancellationToken.IsCancellationRequested) return;
-        if (result.IsSuccess)
-            _snackbar.ShowSuccess(_i18n.GetTranslation("OperationSuccess"));
-        else if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
-            _snackbar.ShowError(result.ErrorMessage);
-        else
-            _snackbar.ShowError(_i18n.GetTranslation("OperationFailed"));
-    }
-
-    #endregion
-
     #region History Commands
 
     [RelayCommand]
@@ -2834,10 +2676,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     {
         CancelSingleTranslationTasks();
         TranslateCancelCommand.Execute(null);
-        PlayAudioCancelCommand.Execute(null);
-        PlayAudioUrlCancelCommand.Execute(null);
         ScreenshotTranslateCancelCommand.Execute(null);
-        SaveToVocabularyCancelCommand.Execute(null);
     }
 
     private async Task<(bool success, string text)> GetTextAsync(bool showFailureFeedback = true)
@@ -2924,8 +2763,6 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             Settings.PropertyChanged -= OnSettingsPropertyChanged;
             TranslateService.Services.CollectionChanged -= OnQuickServiceCollectionChanged;
             OcrService.Services.CollectionChanged -= OnQuickServiceCollectionChanged;
-            TtsService.Services.CollectionChanged -= OnQuickServiceCollectionChanged;
-            VocabularyService.Services.CollectionChanged -= OnQuickServiceCollectionChanged;
 
             _debounceExecutor.Dispose();
             _clipboardMonitor?.Dispose();

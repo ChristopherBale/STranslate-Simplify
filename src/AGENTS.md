@@ -23,6 +23,7 @@
 
 | 功能模块 | 文档 | 重点内容 |
 | --- | --- | --- |
+| 精简版 | [docs/simplified-edition.md](docs/simplified-edition.md) | 划词悬浮图标默认值、截图翻译、移除范围、配置兼容与 Windows 验证 |
 | 运行时启动 | [docs/runtime-bootstrap.md](docs/runtime-bootstrap.md) | 单实例、DI、窗口生命周期、统一前台激活、异常与退出链路 |
 | 插件与服务运行时 | [docs/runtime-plugin-service.md](docs/runtime-plugin-service.md) | 插件发现/加载、服务实例化、PluginContext 与配置持久化 |
 | 主翻译链路 | [docs/flow-main-translation.md](docs/flow-main-translation.md) | 自动翻译、防抖、缓存命中、回译、复制与词典路径 |

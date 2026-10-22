@@ -114,16 +114,6 @@
                                 <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Resources/ocr.png" />
                             </ui:NavigationViewItem.Icon>
                         </ui:NavigationViewItem>
-                        <ui:NavigationViewItem Content="{DynamicResource Tts}" Tag="TtsPage">
-                            <ui:NavigationViewItem.Icon>
-                                <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Resources/tts.png" />
-                            </ui:NavigationViewItem.Icon>
-                        </ui:NavigationViewItem>
-                        <ui:NavigationViewItem Content="{DynamicResource Vocabulary}" Tag="VocabularyPage">
-                            <ui:NavigationViewItem.Icon>
-                                <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Resources/vocabulary.png" />
-                            </ui:NavigationViewItem.Icon>
-                        </ui:NavigationViewItem>
                     </ui:NavigationViewItem.MenuItems>
                 </ui:NavigationViewItem>
 

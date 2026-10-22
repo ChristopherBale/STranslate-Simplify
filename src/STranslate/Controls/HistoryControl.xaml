@@ -161,17 +161,6 @@
                                         FontFamily="Consolas, 'Courier New'"
                                         FontSize="{DynamicResource STControlFontSize12}"
                                         Text="{Binding Phonetic, StringFormat='/\{0\}/'}" />
-                                    <!--  音频播放按钮  -->
-                                    <!--<Button
-                                        Padding="4"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=control:OutputControl}, Path=PlayAudioUrlCommand}"
-                                        CommandParameter="{Binding AudioUrl}"
-                                        ToolTip="{DynamicResource PlayPronunciation}"
-                                        Visibility="{Binding AudioUrl, Converter={cnvt:EqualToVisibilityInverseConverter}}">
-                                        <ui:FontIcon FontSize="{DynamicResource STControlFontSize12}" Icon="{x:Static ui:FluentSystemIcons.Speaker1_24_Regular}" />
-                                    </Button>-->
                                 </ikw:SimpleStackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

@@ -99,8 +99,6 @@ public partial class SettingsWindow
             nameof(GeneralPage) => sp.GetRequiredService<GeneralPage>(),
             nameof(TranslatePage) => sp.GetRequiredService<TranslatePage>(),
             nameof(OcrPage) => sp.GetRequiredService<OcrPage>(),
-            nameof(TtsPage) => sp.GetRequiredService<TtsPage>(),
-            nameof(VocabularyPage) => sp.GetRequiredService<VocabularyPage>(),
             nameof(StandalonePage) => sp.GetRequiredService<StandalonePage>(),
             nameof(HistoryPage) => sp.GetRequiredService<HistoryPage>(),
             nameof(PluginPage) => sp.GetRequiredService<PluginPage>(),
@@ -122,12 +120,6 @@ public partial class SettingsWindow
                     break;
                 case nameof(OcrPage):
                     RootNavigation.SelectedItem = (RootNavigation.MenuItems[1] as NavigationViewItem)?.MenuItems[1];
-                    break;
-                case nameof(TtsPage):
-                    RootNavigation.SelectedItem = (RootNavigation.MenuItems[1] as NavigationViewItem)?.MenuItems[2];
-                    break;
-                case nameof(VocabularyPage):
-                    RootNavigation.SelectedItem = (RootNavigation.MenuItems[1] as NavigationViewItem)?.MenuItems[3];
                     break;
                 case nameof(StandalonePage):
                     RootNavigation.SelectedItem = RootNavigation.MenuItems[2];

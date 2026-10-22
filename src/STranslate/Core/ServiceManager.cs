@@ -43,8 +43,6 @@ public class ServiceManager
         {
             _serviceSettings.TranSvcDatas,
             _serviceSettings.OcrSvcDatas,
-            _serviceSettings.TtsSvcDatas,
-            _serviceSettings.VocabularySvcDatas,
         };
 
         foreach (var metaData in _pluginManager.AllPluginMetaDatas)
@@ -98,8 +96,6 @@ public class ServiceManager
         {
             _serviceSettings.TranSvcDatas.RemoveAll(s => lossSvcs.Contains(s.SvcID));
             _serviceSettings.OcrSvcDatas.RemoveAll(s => lossSvcs.Contains(s.SvcID));
-            _serviceSettings.TtsSvcDatas.RemoveAll(s => lossSvcs.Contains(s.SvcID));
-            _serviceSettings.VocabularySvcDatas.RemoveAll(s => lossSvcs.Contains(s.SvcID));
             _serviceSettings.Save();
 
             // 删除丢失服务对应的JSON文件，并清理空目录

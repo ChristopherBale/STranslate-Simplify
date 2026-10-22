@@ -77,7 +77,7 @@ public partial class Settings : ObservableObject
 
     [ObservableProperty] public partial bool IsMouseSelectionTranslationEnabled { get; set; } = false;
 
-    [ObservableProperty] public partial bool IsMouseSelectionIconEnabled { get; set; } = false;
+    [ObservableProperty] public partial bool IsMouseSelectionIconEnabled { get; set; } = true;
 
     [ObservableProperty] public partial bool IsHistoryNavigationVisible { get; set; } = true;
 

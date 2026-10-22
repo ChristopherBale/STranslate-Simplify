@@ -34,7 +34,6 @@ public partial class ImageTranslateWindowViewModel : ObservableObject, IDisposab
         MainWindowViewModel mainWindowViewModel,
         OcrService ocrService,
         TranslateService translateService,
-        TtsService ttsService,
         Internationalization i18n,
         ISnackbar snackbar,
         INotification notification)
@@ -46,7 +45,6 @@ public partial class ImageTranslateWindowViewModel : ObservableObject, IDisposab
         _mainWindowViewModel = mainWindowViewModel;
         _ocrService = ocrService;
         _translateService = translateService;
-        _ttsService = ttsService;
         _i18n = i18n;
         _snackbar = snackbar;
         _notification = notification;
@@ -84,7 +82,6 @@ public partial class ImageTranslateWindowViewModel : ObservableObject, IDisposab
     private readonly MainWindowViewModel _mainWindowViewModel;
     private readonly OcrService _ocrService;
     private readonly TranslateService _translateService;
-    private readonly TtsService _ttsService;
     private readonly Internationalization _i18n;
     private readonly ISnackbar _snackbar;
     private readonly INotification _notification;
@@ -337,22 +334,6 @@ public partial class ImageTranslateWindowViewModel : ObservableObject, IDisposab
 
     [RelayCommand]
     private void ToggleTextControl() => Settings.IsImTranShowingTextControl = !Settings.IsImTranShowingTextControl;
-
-    [RelayCommand(IncludeCancelCommand = true)]
-    private async Task PlayAudioAsync(string text, CancellationToken cancellationToken)
-    {
-        var ttsSvc = _ttsService.GetActiveSvc<ITtsPlugin>();
-        if (ttsSvc == null)
-        {
-            Helper.PromptConfigureService(
-                _i18n.GetTranslation("Prompt"),
-                _i18n.GetTranslation("TtsServiceNotFound"),
-                nameof(TtsPage));
-            return;
-        }
-
-        await ttsSvc.PlayAudioAsync(text, cancellationToken);
-    }
 
     [RelayCommand]
     private void Copy(string text)
@@ -783,7 +764,6 @@ public partial class ImageTranslateWindowViewModel : ObservableObject, IDisposab
     public void CancelOperations()
     {
         ExecuteCancelCommand.Execute(null);
-        PlayAudioCancelCommand.Execute(null);
         Clear();
     }
 

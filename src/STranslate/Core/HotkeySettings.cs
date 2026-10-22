@@ -38,7 +38,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
     public GlobalHotkey ReplaceTranslateHotkey { get; set; } = new(Constant.EmptyHotkey);
     public GlobalHotkey MouseSelectionTranslationHotkey { get; set; } = new(Constant.EmptyHotkey);
     public GlobalHotkey SilentOcrHotkey { get; set; } = new(Constant.EmptyHotkey);
-    public GlobalHotkey SilentTtsHotkey { get; set; } = new(Constant.EmptyHotkey);
     public GlobalHotkey OcrHotkey { get; set; } = new("Alt + Shift + S");
     public GlobalHotkey ClipboardMonitorHotkey { get; set; } = new(Constant.EmptyHotkey);
 
@@ -53,8 +52,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
     public Hotkey ToggleColorThemeHotkey { get; set; } = new("Ctrl + Shift + R");
 
     public Hotkey ToggleTopmostHotkey { get; set; } = new("Ctrl + Shift + T");
-
-    public Hotkey SaveToVocabularyHotkey { get; set; } = new("Ctrl + Shift + S");
 
     public Hotkey HistoryNavigePreviousHotkey { get; set; } = new("Ctrl + P");
 
@@ -89,7 +86,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
         CreateGlobalHotkeyData(ScreenshotTranslateHotkey.Key, "Hotkey_ScreenshotTranslate", () => ScreenshotTranslateHotkey.Key = Constant.EmptyHotkey),
         CreateGlobalHotkeyData(ImageTranslateHotkey.Key, "Hotkey_ImageTranslate", () => ImageTranslateHotkey.Key = Constant.EmptyHotkey),
         CreateGlobalHotkeyData(SilentOcrHotkey.Key, "Hotkey_SilentOcr", () => SilentOcrHotkey.Key = Constant.EmptyHotkey),
-        CreateGlobalHotkeyData(SilentTtsHotkey.Key, "Hotkey_SilentTts", () => SilentTtsHotkey.Key = Constant.EmptyHotkey),
         CreateGlobalHotkeyData(OcrHotkey.Key, "Hotkey_Ocr", () => OcrHotkey.Key = Constant.EmptyHotkey),
         CreateGlobalHotkeyData(ClipboardMonitorHotkey.Key, "Hotkey_ClipboardMonitor", () => ClipboardMonitorHotkey.Key = Constant.EmptyHotkey),
 
@@ -99,7 +95,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
         new RegisteredHotkeyData(HideInputHotkey.Key, "Hotkey_ShowHideInputBox", HotkeyType.MainWindow, () => HideInputHotkey.Key = Constant.EmptyHotkey),
         new RegisteredHotkeyData(ToggleColorThemeHotkey.Key, "Hotkey_ToggleColorTheme", HotkeyType.MainWindow, () => ToggleColorThemeHotkey.Key = Constant.EmptyHotkey),
         new RegisteredHotkeyData(ToggleTopmostHotkey.Key, "Hotkey_ToggleTopmost", HotkeyType.MainWindow, () => ToggleTopmostHotkey.Key = Constant.EmptyHotkey),
-        new RegisteredHotkeyData(SaveToVocabularyHotkey.Key, "Hotkey_SaveToVocabulary", HotkeyType.MainWindow, () => SaveToVocabularyHotkey.Key = Constant.EmptyHotkey),
         new RegisteredHotkeyData(HistoryNavigePreviousHotkey.Key, "Hotkey_HistoryNavigePrevious", HotkeyType.MainWindow, () => HistoryNavigePreviousHotkey.Key = Constant.EmptyHotkey),
         new RegisteredHotkeyData(HistoryNavigeNextHotkey.Key, "Hotkey_HistoryNavigeNext", HotkeyType.MainWindow, () => HistoryNavigeNextHotkey.Key = Constant.EmptyHotkey),
         new RegisteredHotkeyData(AutoTranslateHotkey.Key, "Hotkey_AutoTranslate", HotkeyType.MainWindow, () => AutoTranslateHotkey.Key = Constant.EmptyHotkey),
@@ -198,7 +193,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
             [nameof(ReplaceTranslateHotkey)] = "Alt + F",
             [nameof(MouseSelectionTranslationHotkey)] = "Alt + Shift + D",
             [nameof(SilentOcrHotkey)] = "Alt + Shift + F",
-            [nameof(SilentTtsHotkey)] = "Alt + Shift + G",
             [nameof(OcrHotkey)] = "Alt + Shift + S",
             [nameof(ClipboardMonitorHotkey)] = "Alt + Shift + A",
             // Software Hotkeys - MainWindow
@@ -371,7 +365,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
         HandleGlobalLogic(nameof(ScreenshotTranslateHotkey), retryOnConflict: true);
         HandleGlobalLogic(nameof(ImageTranslateHotkey), retryOnConflict: true);
         HandleGlobalLogic(nameof(SilentOcrHotkey), retryOnConflict: true);
-        HandleGlobalLogic(nameof(SilentTtsHotkey), retryOnConflict: true);
         HandleGlobalLogic(nameof(OcrHotkey), retryOnConflict: true);
         HandleGlobalLogic(nameof(ClipboardMonitorHotkey), retryOnConflict: true);
     }
@@ -386,7 +379,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
         HotkeyMapper.RemoveHotkey(ScreenshotTranslateHotkey.Key);
         HotkeyMapper.RemoveHotkey(ImageTranslateHotkey.Key);
         HotkeyMapper.RemoveHotkey(SilentOcrHotkey.Key);
-        HotkeyMapper.RemoveHotkey(SilentTtsHotkey.Key);
         HotkeyMapper.RemoveHotkey(OcrHotkey.Key);
         HotkeyMapper.RemoveHotkey(ClipboardMonitorHotkey.Key);
     }
@@ -446,18 +438,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
                     }
 
                     MainWindowViewModel.SilentOcrCommand.Execute(null);
-                }), retryOnConflict);
-                break;
-            case nameof(SilentTtsHotkey):
-                RegisterHotkey(SilentTtsHotkey, WithFullscreenCheck(() =>
-                {
-                    if (MainWindowViewModel.SilentTtsCommand.IsRunning)
-                    {
-                        MainWindowViewModel.SilentTtsCancelCommand.Execute(null);
-                        return;
-                    }
-
-                    MainWindowViewModel.SilentTtsCommand.Execute(null);
                 }), retryOnConflict);
                 break;
             case nameof(ClipboardMonitorHotkey):
@@ -521,7 +501,6 @@ public partial class HotkeySettings : ObservableObject, IDisposable
             case nameof(ScreenshotTranslateHotkey): ScreenshotTranslateHotkey.IsConflict = isConflict; break;
             case nameof(ImageTranslateHotkey): ImageTranslateHotkey.IsConflict = isConflict; break;
             case nameof(SilentOcrHotkey): SilentOcrHotkey.IsConflict = isConflict; break;
-            case nameof(SilentTtsHotkey): SilentTtsHotkey.IsConflict = isConflict; break;
             case nameof(OcrHotkey): OcrHotkey.IsConflict = isConflict; break;
             case nameof(ClipboardMonitorHotkey): ClipboardMonitorHotkey.IsConflict = isConflict; break;
         }

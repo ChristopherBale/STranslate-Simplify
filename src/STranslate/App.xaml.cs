@@ -106,8 +106,6 @@ public partial class App : ISingleInstanceApp, INavigation, IDisposable
                     services.AddSingleton<PluginService>();
                     services.AddSingleton<TranslateService>();
                     services.AddSingleton<OcrService>();
-                    services.AddSingleton<TtsService>();
-                    services.AddSingleton<VocabularyService>();
                     services.AddSingleton<Internationalization>();
                     services.AddSingleton<MouseHookService>();
                     services.AddSingleton<MouseSelectionService>();

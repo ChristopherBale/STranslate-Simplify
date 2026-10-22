@@ -77,7 +77,7 @@
 
 ## OCR 窗口内存与生命周期
 - `OcrWindowViewModel` 是 `Transient + IDisposable`，必须从窗口独立的 `IServiceScope` 解析；窗口关闭时释放 scope，避免 root provider 的 `_disposables` 列表把每次创建的 VM 保留到应用退出。
-- `OcrWindow.OnClosing` 先取消 OCR/TTS 操作，再通过 `ModernWindowLifecycle.DetachModernWindowStyle()` 解除 iNKORE `TitleBarControl` 对父窗口 `WindowStyle` / `ResizeMode` 的属性描述符监听。
+- `OcrWindow.OnClosing` 先取消 OCR 操作，再通过 `ModernWindowLifecycle.DetachModernWindowStyle()` 解除 iNKORE `TitleBarControl` 对父窗口 `WindowStyle` / `ResizeMode` 的属性描述符监听。
 - `OcrWindow.OnClosed` 清空视觉树、输入绑定和 `DataContext`，随后释放窗口 scope。
 - `ModernWindowLifecycleTests` 复用实际 modern window style，验证关闭清理后两个属性描述符 tracker 均被移除。
 

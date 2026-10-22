@@ -248,6 +248,14 @@ public class PluginManager : IDisposable
                 return PluginLoadResult.Fail("IPlugin interface not found", metaData.Name);
             }
 
+            // 精简版仅启用翻译、词典和 OCR 插件；保留磁盘上的其他插件及配置。
+            if (!typeof(ITranslatePlugin).IsAssignableFrom(type) &&
+                !typeof(IDictionaryPlugin).IsAssignableFrom(type) &&
+                !typeof(IOcrPlugin).IsAssignableFrom(type))
+            {
+                return PluginLoadResult.Fail("精简版仅支持翻译、词典和 OCR 插件。", metaData.Name);
+            }
+
             var assemblyName = assembly.GetName().Name;
             if (assemblyName == null)
             {

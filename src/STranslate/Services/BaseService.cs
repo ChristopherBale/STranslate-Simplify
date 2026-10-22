@@ -46,8 +46,6 @@ public abstract partial class BaseService : ObservableObject, IDisposable
         {
             ServiceType.Translation => _serviceSettings.TranSvcDatas,
             ServiceType.OCR => _serviceSettings.OcrSvcDatas,
-            ServiceType.TTS => _serviceSettings.TtsSvcDatas,
-            ServiceType.Vocabulary => _serviceSettings.VocabularySvcDatas,
             _ => _serviceSettings.TranSvcDatas,
         };
 
@@ -63,8 +61,6 @@ public abstract partial class BaseService : ObservableObject, IDisposable
         {
             ServiceType.Translation => "AddTranslationService",
             ServiceType.OCR => "AddOcrService",
-            ServiceType.TTS => "AddTtsService",
-            ServiceType.Vocabulary => "AddVocabularyService",
             _ => "AddService"
         };
         var contentDialog = new ServiceContentDialog(_i18n.GetTranslation(titleKey), Plugins);
@@ -218,14 +214,6 @@ public abstract partial class BaseService : ObservableObject, IDisposable
                     break;
                 case ServiceType.OCR:
                     if (typeof(IOcrPlugin).IsAssignableFrom(metaData.PluginType))
-                        Plugins.Add(metaData);
-                    break;
-                case ServiceType.TTS:
-                    if (typeof(ITtsPlugin).IsAssignableFrom(metaData.PluginType))
-                        Plugins.Add(metaData);
-                    break;
-                case ServiceType.Vocabulary:
-                    if (typeof(IVocabularyPlugin).IsAssignableFrom(metaData.PluginType))
                         Plugins.Add(metaData);
                     break;
                 default:

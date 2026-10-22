@@ -1,3 +1,5 @@
+> This personal simplified edition focuses on click-to-translate selection icons and screenshot translation. Vocabulary and text-to-speech features are removed. See the [simplified edition guide](src/docs/simplified-edition.md) (Chinese) for build and usage instructions.
+
 <div align="center">
 
 <p>
