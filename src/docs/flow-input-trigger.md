@@ -58,6 +58,8 @@
 ### 从入口到结果：Ctrl+CC、鼠标划词、剪贴板监听
 - Ctrl+CC：`CtrlSameCHelper` 监听全局按键，500ms 内双击 `Ctrl+C` 触发 `CrosswordTranslateByCtrlSameCHandler()`。
 - 鼠标划词：拖选和双击选词共用同一条完成事件链路。`IsMouseSelectionTranslationEnabled` 和 `IsMouseSelectionIconEnabled` 是独立开关，任意一个开启都会维持同一个 Hook。处理优先级为增量翻译、直接翻译、悬浮图标；两者同时开启时直接翻译，不显示图标。
+- 悬浮图标由 `MouseSelectionIconController` 延迟创建并转发点击事件。锁屏/解锁、远程会话切换、显示配置变化、睡眠/恢复会标记旧窗口失效，在 UI 线程关闭并释放透明窗口的渲染资源；下次划词重新创建。系统事件先更新版本号，避免排队期间的划词请求复用旧窗口，也避免旧回调关闭新窗口；退出时解除系统事件订阅。
+- 图标窗口每次显示都恢复 40×40 DIP，从固定尺寸计算物理边界，不以 `WM_SIZE`/DPI 切换后回写的 `Width`/`Height` 作为下一次缩放输入。跨屏定位后在解除 Cloak 前使用 WPF 当前 DPI 再定位并完成布局；显式清空 Window Style，避免全局现代窗口模板影响图标布局。
 - 剪贴板监听：`ClipboardMonitor` 收到 `WM_CLIPBOARDUPDATE` 后读取文本，触发 `OnClipboardTextChanged -> ExecuteTranslate()`。
 
 ### 触发后的窗口置前

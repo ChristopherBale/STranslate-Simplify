@@ -15,6 +15,7 @@
     ShowInTaskbar="False"
     SizeToContent="Manual"
     SnapsToDevicePixels="True"
+    Style="{x:Null}"
     Topmost="True"
     UseLayoutRounding="True"
     WindowStyle="None"

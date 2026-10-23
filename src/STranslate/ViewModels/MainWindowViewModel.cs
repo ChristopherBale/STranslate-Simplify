@@ -33,7 +33,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     private readonly ISnackbar _snackbar;
     private readonly INotification _notification;
     private readonly MouseSelectionService _mouseSelectionService;
-    private readonly MouseSelectionIconWindow _mouseSelectionIconWindow;
+    private readonly MouseSelectionIconController _mouseSelectionIconController;
     private bool _mouseSelectionTranslationHasTopmostLease;
     private bool _incrementalHasTopmostLease;
     private int _managedTopmostLeaseCount;
@@ -74,7 +74,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         Settings settings,
         HotkeySettings hotkeySettings,
         MouseSelectionService mouseSelectionService,
-        MouseSelectionIconWindow mouseSelectionIconWindow)
+        MouseSelectionIconController mouseSelectionIconController)
     {
         DataProvider = dataProvider;
         IdentifiedLanguageOptions = DataProvider.LangEnums
@@ -93,14 +93,14 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         Settings = settings;
         HotkeySettings = hotkeySettings;
         _mouseSelectionService = mouseSelectionService;
-        _mouseSelectionIconWindow = mouseSelectionIconWindow;
+        _mouseSelectionIconController = mouseSelectionIconController;
         _mouseSelectionService.TextSelected += OnMouseSelectionTextSelected;
         _mouseSelectionService.IncrementalTextSelected += OnIncrementalMouseTextSelected;
         _mouseSelectionService.SelectionStarted += OnMouseSelectionStarted;
         _mouseSelectionService.IconRequested += OnMouseSelectionIconRequested;
         _mouseSelectionService.IconDismissRequested += OnMouseSelectionIconDismissRequested;
         _mouseSelectionService.StateChanged += OnMouseSelectionStateChanged;
-        _mouseSelectionIconWindow.TranslateRequested += OnMouseSelectionIconTranslateRequested;
+        _mouseSelectionIconController.TranslateRequested += OnMouseSelectionIconTranslateRequested;
 
         TranslateService.Services.CollectionChanged += OnQuickServiceCollectionChanged;
         OcrService.Services.CollectionChanged += OnQuickServiceCollectionChanged;
@@ -1562,7 +1562,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 var point = new System.Windows.Point(drawingPoint.X, drawingPoint.Y);
-                _mouseSelectionIconWindow.ShowAt(point);
+                _mouseSelectionIconController.ShowAt(point);
             });
         }
         catch (Exception ex)
@@ -1577,8 +1577,8 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
         {
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                if (!_mouseSelectionIconWindow.ContainsPhysicalPoint(point))
-                    _mouseSelectionIconWindow.HideWindow();
+                if (!_mouseSelectionIconController.ContainsPhysicalPoint(point))
+                    _mouseSelectionIconController.HideWindow();
             });
         }
         catch (Exception ex)
@@ -1603,7 +1603,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     }
 
     private void OnMouseSelectionIconDismissRequested(object? sender, EventArgs e)
-        => _ = Application.Current.Dispatcher.InvokeAsync(_mouseSelectionIconWindow.HideWindow);
+        => _ = Application.Current.Dispatcher.InvokeAsync(_mouseSelectionIconController.HideWindow);
 
     private void OnMouseSelectionStateChanged(object? sender, EventArgs e)
         => _ = Application.Current.Dispatcher.InvokeAsync(ApplyMouseSelectionWindowMode);
@@ -2758,7 +2758,8 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             _mouseSelectionService.IconRequested -= OnMouseSelectionIconRequested;
             _mouseSelectionService.IconDismissRequested -= OnMouseSelectionIconDismissRequested;
             _mouseSelectionService.StateChanged -= OnMouseSelectionStateChanged;
-            _mouseSelectionIconWindow.TranslateRequested -= OnMouseSelectionIconTranslateRequested;
+            _mouseSelectionIconController.TranslateRequested -= OnMouseSelectionIconTranslateRequested;
+            _mouseSelectionIconController.Dispose();
             _clipboardMonitor?.OnClipboardTextChanged -= OnClipboardTextChanged;
             Settings.PropertyChanged -= OnSettingsPropertyChanged;
             TranslateService.Services.CollectionChanged -= OnQuickServiceCollectionChanged;

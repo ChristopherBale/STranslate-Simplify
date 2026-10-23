@@ -18,7 +18,6 @@ namespace STranslate.Views;
 /// </summary>
 public partial class MouseSelectionIconWindow : Window
 {
-    private const int IconOffset = 10;
     private const double InitialIconScale = 0.86;
     private static readonly Duration ShowAnimationDuration = TimeSpan.FromMilliseconds(140);
     private readonly DispatcherTimer _hideTimer;
@@ -66,41 +65,18 @@ public partial class MouseSelectionIconWindow : Window
     public void ShowAt(System.Windows.Point point)
     {
         var physicalPoint = new DrawingPoint((int)Math.Round(point.X), (int)Math.Round(point.Y));
-        var monitor = MonitorInfo.GetDisplayMonitors()
-            .FirstOrDefault(item => item.Bounds.Contains(point)) ?? MonitorInfo.GetCursorDisplayMonitor();
         var dpi = Win32Helper.GetDpiScaleForPhysicalPoint(physicalPoint.X, physicalPoint.Y);
-        var physicalWidth = Math.Max(1, (int)Math.Round(Width * dpi.DpiScaleX));
-        var physicalHeight = Math.Max(1, (int)Math.Round(Height * dpi.DpiScaleY));
-        var offsetX = (int)Math.Round(IconOffset * dpi.DpiScaleX);
-        var offsetY = (int)Math.Round(IconOffset * dpi.DpiScaleY);
-        var workArea = new Rectangle(
-            (int)Math.Round(monitor.WorkingArea.Left),
-            (int)Math.Round(monitor.WorkingArea.Top),
-            (int)Math.Round(monitor.WorkingArea.Width),
-            (int)Math.Round(monitor.WorkingArea.Height));
-
-        var left = physicalPoint.X + offsetX;
-        var top = physicalPoint.Y + offsetY;
-        if (left + physicalWidth > workArea.Right)
-            left = physicalPoint.X - physicalWidth - offsetX;
-        if (top + physicalHeight > workArea.Bottom)
-            top = physicalPoint.Y - physicalHeight - offsetY;
-
-        left = Math.Clamp(left, workArea.Left, workArea.Right - physicalWidth);
-        top = Math.Clamp(top, workArea.Top, workArea.Bottom - physicalHeight);
 
         var showRequestId = ++_showRequestId;
         StopShowAnimation();
         PrepareContentForShow();
         Win32Helper.SetWindowCloaked(this, cloaked: true);
-        Left = left / dpi.DpiScaleX;
-        Top = top / dpi.DpiScaleY;
-        Win32Helper.SetWindowPhysicalBounds(this, left, top, physicalWidth, physicalHeight, showWindow: false);
+        ApplyPhysicalBounds(physicalPoint, dpi);
         Show();
         RestartHideTimer();
         // Render 优先级本身不保证画面已经提交；Loaded 可确保透明初始帧先完成布局和渲染。
         _ = Dispatcher.InvokeAsync(
-            () => RevealAndAnimate(showRequestId),
+            () => RevealAndAnimate(showRequestId, physicalPoint),
             DispatcherPriority.Loaded);
     }
 
@@ -150,6 +126,14 @@ public partial class MouseSelectionIconWindow : Window
         Hide();
     }
 
+    protected override void OnClosed(EventArgs e)
+    {
+        _showRequestId++;
+        _hideTimer.Stop();
+        StopShowAnimation();
+        base.OnClosed(e);
+    }
+
     /// <summary>
     /// 判断物理屏幕坐标是否位于当前图标窗口内。
     /// </summary>
@@ -180,15 +164,41 @@ public partial class MouseSelectionIconWindow : Window
         _hideTimer.Start();
     }
 
-    private void RevealAndAnimate(int showRequestId)
+    private void RevealAndAnimate(int showRequestId, DrawingPoint physicalPoint)
     {
         if (showRequestId != _showRequestId || !IsVisible)
             return;
+
+        // 跨屏定位后 HWND 才拥有目标 DPI；使用 WPF 当前 DPI 重设固定尺寸并完成布局，
+        // 避免把旧 DPI 下 WM_SIZE 回写的 Width/Height 带进下一次显示。
+        ApplyPhysicalBounds(physicalPoint, VisualTreeHelper.GetDpi(this));
+        UpdateLayout();
 
         // 等 DWM 接收透明初始帧，并在 Cloak 内挂好动画时钟后再显示，避免暴露动画前后的中间基值。
         Win32Helper.FlushDesktopComposition();
         StartShowAnimation();
         Win32Helper.SetWindowCloaked(this, cloaked: false);
+    }
+
+    private void RestoreLogicalSize()
+    {
+        Width = MouseSelectionIconPlacement.LogicalSize;
+        Height = MouseSelectionIconPlacement.LogicalSize;
+    }
+
+    private void ApplyPhysicalBounds(DrawingPoint point, DpiScale dpi)
+    {
+        RestoreLogicalSize();
+        var monitor = MonitorInfo.GetDisplayMonitors()
+            .FirstOrDefault(item => item.Bounds.Contains(new System.Windows.Point(point.X, point.Y)))
+            ?? MonitorInfo.GetCursorDisplayMonitor();
+        var workArea = new Rectangle(
+            (int)Math.Round(monitor.WorkingArea.Left),
+            (int)Math.Round(monitor.WorkingArea.Top),
+            (int)Math.Round(monitor.WorkingArea.Width),
+            (int)Math.Round(monitor.WorkingArea.Height));
+        var bounds = MouseSelectionIconPlacement.Calculate(point, workArea, dpi.DpiScaleX, dpi.DpiScaleY);
+        Win32Helper.SetWindowPhysicalBounds(this, bounds.Left, bounds.Top, bounds.Width, bounds.Height, showWindow: false);
     }
 
     private void PrepareContentForShow()
